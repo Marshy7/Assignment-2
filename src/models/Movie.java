@@ -2,6 +2,8 @@ package models;
 
 import com.google.common.base.Objects;
 
+import utils.ToJsonString;
+
 public class Movie{
 	
 	 static Long counter = 0l;
@@ -22,7 +24,7 @@ public class Movie{
 	
 	 @Override
 	 public String toString() {
-		 return "";//new ToJsonString(getClass(), this).toString();
+		 return new ToJsonString(getClass(), this).toString();
 	 }
 	
 	 @Override

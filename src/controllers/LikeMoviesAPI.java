@@ -1,5 +1,6 @@
 package controllers;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,9 +20,36 @@ public class LikeMoviesAPI{
 		 return user;
 	 }
 	 
+	 public void removeUser(Long id)  {
+		 userIndex.remove(id);	    
+	  }
+	 
+	 public User getUserById(Long id) 
+	  {
+	    return userIndex.get(id);
+	  }
+	 
+	 public Collection<User> getUsers ()  {
+		 return userIndex.values();
+	  }
+	 
 	 public Movie addMovie(String title, String year, String url) {
 		 Movie movie = new Movie (title, year, url);
 		 movieIndex.put(movie.id, movie);
 		 return movie;
 	 }
+	 
+	 public void removeMovie(Long id)  {
+		 movieIndex.remove(id);	    
+	  }
+	 
+	 public Movie getMovieById(Long id) 
+	  {
+	    return movieIndex.get(id);
+	  }
+	 
+	 public Collection<Movie> getMovies ()  {
+		 return movieIndex.values();
+	  }
+	 
 }

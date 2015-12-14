@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.google.common.base.Objects;
 
+import utils.ToJsonString;
+
 public class User{
 	
 	 static Long counter = 0l;
@@ -17,7 +19,7 @@ public class User{
 	
 	 public List<Rating> ratings = new ArrayList<>();
 	
-	 public User(String firstName, String lastName, String gender, String age, String occupation){
+	 public User(String firstName, String lastName, String age, String gender, String occupation){
 		 this.id = counter++;
 		 this.firstName = firstName;
 		 this.lastName = lastName;
@@ -27,7 +29,7 @@ public class User{
 	 }
 	
 	 public String toString() {
-		 return "";//new ToJsonString(getClass(), this).toString();
+		 return new ToJsonString(getClass(), this).toString();
 	 }
 	
 	 @Override

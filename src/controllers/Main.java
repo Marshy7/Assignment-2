@@ -1,13 +1,44 @@
 package controllers;
 
+import java.io.File;
+import java.util.Collection;
+
+import com.google.common.base.Optional;
+
 import asg.cliche.Command;
 import asg.cliche.Param;
 import asg.cliche.Shell;
 import asg.cliche.ShellFactory;
+import models.Movie;
+import models.User;
+import utils.Serializer;
+import utils.XMLSerializer;
 
 public class Main{
 	
 	 public LikeMoviesAPI likeMovies;
+	 
+	 public Main() throws Exception  {
+		
+		 likeMovies = new LikeMoviesAPI();
+		 /**
+		File datastore = new File("datastore.xml");
+		Serializer serializer = new XMLSerializer(datastore);
+			
+		paceApi = new PacemakerAPI(serializer);
+		if (datastore.isFile())  {
+		paceApi.load();
+		}
+		*/
+	  }
+	 
+	 public static void main(String[] args) throws Exception {
+		 
+		 Main main = new Main();
+		 Shell shell = ShellFactory.createConsoleShell("lm", "Welcome to likemovie - ?help for instructions", main);
+		 shell.commandLoop();
+		 //main.likeMovies.store();
+	 }
 	 
 	 @Command(description="Add a new User")
 	 public void addUser (
@@ -22,8 +53,20 @@ public class Main{
 	
 	 @Command(description="Delete a User")
 	 public void removeUser (@Param(name="id") Long id){
-		 //likeMovies.removeUser(id);
+		 
+		 Optional<User> user = Optional.fromNullable(likeMovies.getUserById(id));
+		    if (user.isPresent())
+		    {
+		    	likeMovies.removeUser(id);
+		    }
+		 
 	 }
+	 
+	 @Command(description="Get all users details")
+	  public void getUsers ()  {
+	    Collection<User> users = likeMovies.getUsers();
+	    System.out.println(users);
+	  }
 	 
 	 @Command(description="Add a Movie")
 	 public void addMovie (
@@ -34,11 +77,21 @@ public class Main{
 	 likeMovies.addMovie(title, year, url);
 	 }
 	 
-	 public static void main(String[] args) throws Exception {
+	 @Command(description="Delete a Movie")
+	 public void removeMovie (@Param(name="id") Long id){
 		 
-		 Main main = new Main();
-		 Shell shell = ShellFactory.createConsoleShell("lm", "Welcome to likemovie - ?help for instructions", main);
-		 shell.commandLoop();
-		 //main.likeMovies.store();
+		 Optional<Movie> Movie = Optional.fromNullable(likeMovies.getMovieById(id));
+		    if (Movie.isPresent())
+		    {
+		    	likeMovies.removeMovie(id);
+		    }
+		 
 	 }
+	 
+	 @Command(description="Get all users details")
+	  public void getMovies ()  {
+	    Collection<Movie> Movies = likeMovies.getMovies();
+	    System.out.println(Movies);
+	  }
+	 	 
 }
