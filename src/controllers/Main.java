@@ -1,6 +1,7 @@
 package controllers;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import com.google.common.base.Optional;
@@ -11,16 +12,23 @@ import asg.cliche.Shell;
 import asg.cliche.ShellFactory;
 import models.Movie;
 import models.User;
+import utils.CvsLoader;
 import utils.Serializer;
 import utils.XMLSerializer;
 
 public class Main{
 	
 	 public LikeMoviesAPI likeMovies;
+	 CvsLoader cvs;
+	 ArrayList<String> userList;
 	 
 	 public Main() throws Exception  {
 		
 		 likeMovies = new LikeMoviesAPI();
+		 cvs = new CvsLoader();
+		 
+		 
+		 
 		 /**
 		File datastore = new File("datastore.xml");
 		Serializer serializer = new XMLSerializer(datastore);
@@ -34,10 +42,18 @@ public class Main{
 	 
 	 public static void main(String[] args) throws Exception {
 		 
+		 
 		 Main main = new Main();
 		 Shell shell = ShellFactory.createConsoleShell("lm", "Welcome to likemovie - ?help for instructions", main);
 		 shell.commandLoop();
 		 //main.likeMovies.store();
+	 }
+	 
+	 @Command(description="Add a new User")
+	 public void loadFromCvs (			 ){
+		 
+		 likeMovies.loadFromCvs(); 
+	 
 	 }
 	 
 	 @Command(description="Add a new User")
@@ -68,6 +84,8 @@ public class Main{
 	    System.out.println(users);
 	  }
 	 
+	 
+	 
 	 @Command(description="Add a Movie")
 	 public void addMovie (
 			 @Param(name="title") String title, 
@@ -88,7 +106,7 @@ public class Main{
 		 
 	 }
 	 
-	 @Command(description="Get all users details")
+	 @Command(description="Get all movies details")
 	  public void getMovies ()  {
 	    Collection<Movie> Movies = likeMovies.getMovies();
 	    System.out.println(Movies);

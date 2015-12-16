@@ -21,6 +21,14 @@ public class Movie{
 		 this.year = year;
 		 this.url = url;
 	 }
+	 
+	 public Movie(Long id, String title, String year, String url) {
+		 this.id = id;
+		 counter++;
+		 this.title = title;
+		 this.year = year;
+		 this.url = url;
+	 }
 	
 	 @Override
 	 public String toString() {

@@ -27,6 +27,20 @@ public class User{
 		 this.age = age;
 		 this.occupation = occupation;
 	 }
+	 
+	 public User(long id, String firstName, String lastName, String age, String gender, String occupation){
+		 this.id = id;
+		 counter++;
+		 this.firstName = firstName;
+		 this.lastName = lastName;
+		 this.gender = gender;
+		 this.age = age;
+		 this.occupation = occupation;
+	 }
+	 
+	 public void rateMovie(long movieId, int movieRating){
+		 ratings.add(new Rating(id, movieId, movieRating));
+	 }
 	
 	 public String toString() {
 		 return new ToJsonString(getClass(), this).toString();
