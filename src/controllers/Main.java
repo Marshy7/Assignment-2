@@ -24,20 +24,14 @@ public class Main{
 	 
 	 public Main() throws Exception  {
 		
-		 likeMovies = new LikeMoviesAPI();
-		 cvs = new CvsLoader();
 		 
-		 
-		 
-		 /**
+		 		
 		File datastore = new File("datastore.xml");
 		Serializer serializer = new XMLSerializer(datastore);
 			
-		paceApi = new PacemakerAPI(serializer);
-		if (datastore.isFile())  {
-		paceApi.load();
-		}
-		*/
+		likeMovies = new LikeMoviesAPI(serializer);
+		
+		
 	  }
 	 
 	 public static void main(String[] args) throws Exception {
@@ -49,7 +43,7 @@ public class Main{
 		 //main.likeMovies.store();
 	 }
 	 
-	 @Command(description="Add a new User")
+	 @Command(description="Load from CVS file")
 	 public void loadFromCvs (			 ){
 		 
 		 likeMovies.loadFromCvs(); 
@@ -68,13 +62,9 @@ public class Main{
 	 }
 	
 	 @Command(description="Delete a User")
-	 public void removeUser (@Param(name="id") Long id){
+	 public void removeUser (@Param(name="User ID") String id){
 		 
-		 Optional<User> user = Optional.fromNullable(likeMovies.getUserById(id));
-		    if (user.isPresent())
-		    {
-		    	likeMovies.removeUser(id);
-		    }
+		 likeMovies.removeUser(id);
 		 
 	 }
 	 
@@ -82,6 +72,16 @@ public class Main{
 	  public void getUsers ()  {
 	    Collection<User> users = likeMovies.getUsers();
 	    System.out.println(users);
+	  }
+	 
+	 @Command(description="Store file to XML")
+	  public void write () throws Exception  {
+	    likeMovies.store();
+	  }
+	 
+	 @Command(description="load file from XML")
+	  public void load () throws Exception  {
+	    likeMovies.load();
 	  }
 	 
 	 
@@ -96,7 +96,7 @@ public class Main{
 	 }
 	 
 	 @Command(description="Delete a Movie")
-	 public void removeMovie (@Param(name="id") Long id){
+	 public void removeMovie (@Param(name="id") String id){
 		 
 		 Optional<Movie> Movie = Optional.fromNullable(likeMovies.getMovieById(id));
 		    if (Movie.isPresent())
@@ -106,10 +106,33 @@ public class Main{
 		 
 	 }
 	 
+	 @Command(description="Get a movies details")
+	  public void getMovie (@Param(name="Movie ID") String id)  {
+	    Movie movie = likeMovies.getMovie(id);
+	    System.out.println(movie);
+	  }
+	 
 	 @Command(description="Get all movies details")
-	  public void getMovies ()  {
-	    Collection<Movie> Movies = likeMovies.getMovies();
+	  public void getAllMovies ()  {
+	    Collection<Movie> Movies = likeMovies.getAllMovies();
 	    System.out.println(Movies);
 	  }
+	 
+	 @Command(description="Rate a Movie")
+	 public void rateMovie (
+			 @Param(name="User ID") String userId, 
+			 @Param(name="Movie ID") String movieId, 
+			 @Param(name="Movie Rating") String rating){
+		 
+		 likeMovies.rateMovie(userId, movieId, rating);
+	 }
+	 
+	 @Command(description="Get user Ratings")
+	 public void getUserRatings (
+			 @Param(name="User ID") String userId){
+		 
+		 System.out.println(likeMovies.getUserRatings(userId));
+	 }
+	 
 	 	 
 }

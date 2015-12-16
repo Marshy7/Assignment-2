@@ -14,20 +14,64 @@ public class Movie{
 	 public String year;
 	 public String url;
 	 
+	 public int noOfRatings;
+	 public int totalRating;
+	 public double averageRating;
+	 
 	 
 	 public Movie(String title, String year, String url) {
 		 this.id = counter++;
 		 this.title = title;
 		 this.year = year;
 		 this.url = url;
+		 noOfRatings = 0;
+		 totalRating = 0;
+		 averageRating = 0;
 	 }
 	 
-	 public Movie(Long id, String title, String year, String url) {
-		 this.id = id;
+	 public Movie(String id, String title, String year, String url) {
+		 this.id = Long.parseLong(id);
 		 counter++;
 		 this.title = title;
 		 this.year = year;
 		 this.url = url;
+		 noOfRatings = 0;
+		 totalRating = 0;
+		 averageRating = 0;
+	 }
+	 
+	 public void setTitle(String title){
+		 this.title = title;
+	 }
+	 
+	 public String getTitle(){
+		 return title;
+	 }
+	 
+	 public void setYear(String year){
+		 this.year = year;
+	 }
+	 
+	 public String getYear(){
+		 return year;
+	 }
+	 
+	 public void setUrl(String url){
+		 this.url = url;
+	 }
+	 
+	 public String getUrl(){
+		 return url;
+	 }
+	 
+	 public void addRating(String rating){
+		 noOfRatings++;
+		 totalRating += Integer.parseInt(rating);
+		 averageRating = totalRating/noOfRatings;
+	 }
+	 
+	 public int getAverageRating(){
+		 return (int)(averageRating + 0.5);
 	 }
 	
 	 @Override

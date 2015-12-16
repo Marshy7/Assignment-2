@@ -3,6 +3,7 @@ package controllers;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Optional;
@@ -11,14 +12,39 @@ import models.Movie;
 import models.Rating;
 import models.User;
 import utils.CvsLoader;
+import utils.Serializer;
 
 public class LikeMoviesAPI{
+	
+	Serializer serializer;	
 	
 	 public Map<Long, User> userIndex = new HashMap<>();
 	 public Map<Long, Movie> movieIndex = new HashMap<>();
 	 ArrayList<String> userList, movieList, ratingList;
 	 
 	 public LikeMoviesAPI(){}
+	 
+	 
+	 public LikeMoviesAPI(Serializer serializer){
+	    this.serializer = serializer;
+	  }
+	  
+	  @SuppressWarnings("unchecked")
+	  public void load() throws Exception
+	  {
+	    serializer.read();
+	    userIndex 		= (Map<Long, User>) serializer.pop();
+	    movieIndex      = (Map<Long, Movie>)   serializer.pop();
+	    
+	  }
+	  
+	  public void store() throws Exception
+	  {
+	    
+	    serializer.push(movieIndex);
+	    serializer.push(userIndex);
+	    serializer.write(); 
+	  }
 	 
 	 public  void loadFromCvs(){
 		 CvsLoader cvs = new CvsLoader();
@@ -28,10 +54,10 @@ public class LikeMoviesAPI{
 			 		 
 			 String[] userTokens = userLoad.split("[|]");
 			 
-			 Optional<User> userCheck = Optional.fromNullable(getUserById(Long.parseLong(userTokens[0])));
+			 Optional<User> userCheck = Optional.fromNullable(getUserById(userTokens[0]));
 			    if (!userCheck.isPresent())
 			    {
-			    	 User user = new User (Long.parseLong(userTokens[0]), userTokens[1], userTokens[2], userTokens[3], userTokens[4], userTokens[5]);
+			    	 User user = new User (userTokens[0], userTokens[1], userTokens[2], userTokens[3], userTokens[4], userTokens[5]);
 					 userIndex.put(user.id, user);
 			    }
 			 
@@ -42,10 +68,10 @@ public class LikeMoviesAPI{
 			 		 
 			 String[] movieTokens = movieLoad.split("[|]");
 			 
-			 Optional<Movie> movieCheck = Optional.fromNullable(getMovieById(Long.parseLong(movieTokens[0])));
+			 Optional<Movie> movieCheck = Optional.fromNullable(getMovieById(movieTokens[0]));
 			    if (!movieCheck.isPresent())
 			    {
-			    	 Movie movie = new Movie (Long.parseLong(movieTokens[0]), movieTokens[1], movieTokens[2], movieTokens[3]);
+			    	 Movie movie = new Movie (movieTokens[0], movieTokens[1], movieTokens[2], movieTokens[3]);
 					 movieIndex.put(movie.id, movie);
 			    }
 			 
@@ -56,12 +82,15 @@ public class LikeMoviesAPI{
 			 		 
 			 String[] ratingTokens = ratingLoad.split("[|]");
 			 
-			 Optional<User> userCheck = Optional.fromNullable(getUserById(Long.parseLong(ratingTokens[0])));
-			    if (userCheck.isPresent())
+			 Optional<User> userCheck = Optional.fromNullable(getUserById(ratingTokens[0]));
+			 Optional<Movie> movieCheck = Optional.fromNullable(getMovieById(ratingTokens[1]));
+			    if (userCheck.isPresent() && movieCheck.isPresent())
 			    {
 			    	 User user = userIndex.get(Long.parseLong(ratingTokens[0]));
-			    	 user.rateMovie(Long.parseLong(ratingTokens[1]), Integer.parseInt(ratingTokens[2]));
-					 
+			    	 user.rateMovie(ratingTokens[1], ratingTokens[2]);
+			    	 
+			    	 Movie movie = movieIndex.get(Long.parseLong(ratingTokens[1]));
+					 movie.addRating(ratingTokens[2]);
 			    }
 			 
 		 }
@@ -74,13 +103,13 @@ public class LikeMoviesAPI{
 		 return user;
 	 }
 	 
-	 public void removeUser(Long id)  {
-		 userIndex.remove(id);	    
+	 public void removeUser(String id)  {
+		 userIndex.remove(Long.parseLong(id));    
 	  }
 	 
-	 public User getUserById(Long id) 
+	 public User getUserById(String id) 
 	  {
-	    return userIndex.get(id);
+	    return userIndex.get(Long.parseLong(id));
 	  }
 	 
 	 public Collection<User> getUsers ()  {
@@ -93,17 +122,66 @@ public class LikeMoviesAPI{
 		 return movie;
 	 }
 	 
-	 public void removeMovie(Long id)  {
-		 movieIndex.remove(id);	    
+	 public void removeMovie(String id)  {
+		 
+		 Optional<User> user = Optional.fromNullable(getUserById(id));
+		    if (user.isPresent())
+		    {
+		    	movieIndex.remove(id);
+		    }
+		    
 	  }
 	 
-	 public Movie getMovieById(Long id) 
+	 public Movie getMovieById(String id) 
 	  {
-	    return movieIndex.get(id);
+	    return movieIndex.get(Long.parseLong(id));
 	  }
 	 
-	 public Collection<Movie> getMovies ()  {
+	 public Movie getMovie(String movieId){
+		 
+		 Movie movie = null;;
+		 
+		 Optional<Movie> movieCheck = Optional.fromNullable(getMovieById(movieId));
+		    if (movieCheck.isPresent()){
+		    	
+		    	movie = movieIndex.get(movieId);
+		    }
+		 return movie;
+	 }
+	 
+	 public Collection<Movie> getAllMovies ()  {
 		 return movieIndex.values();
 	  }
+	 
+	 public void rateMovie(String userId, String movieId, String rating){
+		 Optional<User> userCheck = Optional.fromNullable(getUserById(userId));
+		 Optional<Movie> movieCheck = Optional.fromNullable(getMovieById(movieId));
+		    if (userCheck.isPresent() && movieCheck.isPresent())
+		    {
+		    	 User user = userIndex.get(Long.parseLong(userId));
+		    	 user.rateMovie(movieId, rating);
+		    	 
+		    	 Movie movie = movieIndex.get(Long.parseLong(movieId));
+				 movie.addRating(rating);
+		    }
+	 }
+	 
+	 public List getUserRatings(String userId){
+		 
+		 List<Rating> ratings = null;
+		 
+		 Optional<User> userCheck = Optional.fromNullable(getUserById(userId));
+		
+		    if (userCheck.isPresent())
+		    {
+		    	 User user = userIndex.get(userId);
+		    	 ratings = user.getUserRatings();
+		    	 		    	 
+		    }
+		 
+		 return ratings;
+	 }
+	 
+	 
 	 
 }

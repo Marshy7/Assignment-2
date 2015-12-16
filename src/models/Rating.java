@@ -17,6 +17,8 @@ public class Rating {
 		this.movieRating = movieRating;
 	}
 	
+	
+	
 	@Override
 	 public String toString() {
 		 return new ToJsonString(getClass(), this).toString();
