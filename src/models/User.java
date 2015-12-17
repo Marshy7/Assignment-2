@@ -17,7 +17,7 @@ public class User{
 	 public int age;
 	 public String occupation;
 	
-	 public List<Rating> ratings = new ArrayList<>();
+	 public ArrayList<Rating> ratings = new ArrayList<>();
 	
 	 public User(String firstName, String lastName, String age, String gender, String occupation){
 		 this.id = counter++;
@@ -82,7 +82,7 @@ public class User{
 		 ratings.add(new Rating(id, Long.parseLong(movieId), Integer.parseInt(rating)));
 	 }
 	 	 
-	 public List<Rating> getUserRatings(){
+	 public ArrayList<Rating> getUserRatings(){
 		 
 		 return ratings;
 	 }

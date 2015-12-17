@@ -4,7 +4,7 @@ import com.google.common.base.Objects;
 
 import utils.ToJsonString;
 
-public class Movie{
+public class Movie implements Comparable<Movie>{
 	
 	 static Long counter = 0l;
 	
@@ -73,6 +73,17 @@ public class Movie{
 	 public int getAverageRating(){
 		 return (int)(averageRating + 0.5);
 	 }
+	 
+	 @Override
+		public int compareTo(Movie that) {
+			if (this.averageRating < that.averageRating){
+				return -1;
+			}
+			if (this.averageRating > that.averageRating){
+				return 1;
+			}
+			return 0;
+		}
 	
 	 @Override
 	 public String toString() {

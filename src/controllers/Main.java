@@ -74,6 +74,12 @@ public class Main{
 	    System.out.println(users);
 	  }
 	 
+	 @Command(description="Get User recommendations")
+	  public void recommendMovies (@Param(name="User ID") String id)  {
+	    ArrayList<Movie> movies = likeMovies.recommendMovies(id);
+	    System.out.println(movies);
+	  }
+	 
 	 @Command(description="Store file to XML")
 	  public void write () throws Exception  {
 	    likeMovies.store();
@@ -116,6 +122,12 @@ public class Main{
 	  public void getAllMovies ()  {
 	    Collection<Movie> Movies = likeMovies.getAllMovies();
 	    System.out.println(Movies);
+	  }
+	 
+	 @Command(description="Get top 10 movies details")
+	  public void getTopTenMovies ()  {
+	    ArrayList<Movie> movies = likeMovies.getTopTenMovies();
+	    System.out.println(movies);
 	  }
 	 
 	 @Command(description="Rate a Movie")

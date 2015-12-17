@@ -2,6 +2,7 @@ package controllers;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,6 +117,51 @@ public class LikeMoviesAPI{
 		 return userIndex.values();
 	  }
 	 
+	 public ArrayList<Movie> recommendMovies(String userId) {
+		 
+		 ArrayList<Movie> movies = new ArrayList<Movie>();
+		 ArrayList<Movie> recommendMovies = new ArrayList<Movie>();
+		 
+		 List<Rating> ratings = null;
+		 
+		 Optional<User> userCheck = Optional.fromNullable(getUserById(userId));
+		
+		    if (userCheck.isPresent())
+		    {
+		    	 User user = userIndex.get(Long.parseLong(userId));
+		    	 ratings = user.getUserRatings();
+		    	 		    	 
+		    }
+		 
+		 for (Movie movie: movieIndex.values()) {
+			 
+			 boolean watched = false;
+			 			 
+			 for(Rating movieWatched: ratings){
+				 if(movie.id == movieWatched.movieId){
+					 watched = true;
+				 }
+			 }
+			 if(!watched){
+				 movies.add(movie);
+			 }
+		 }		 		 
+		 
+		 Collections.sort(movies);
+		 int recommendMovie = 5;
+		 if(movies.size() < recommendMovie){
+			 recommendMovie = movies.size();
+		 }
+		 
+		 for (int i = (movies.size() -1); i > (movies.size() - recommendMovie); i--){
+			 			 
+			 recommendMovies.add(movies.get(i));
+			 			 
+		 }
+		 
+		 return recommendMovies;
+	 }
+	 
 	 public Movie addMovie(String title, String year, String url) {
 		 Movie movie = new Movie (title, year, url);
 		 movieIndex.put(movie.id, movie);
@@ -153,6 +199,27 @@ public class LikeMoviesAPI{
 		 return movieIndex.values();
 	  }
 	 
+	 
+	 public ArrayList<Movie> getTopTenMovies() {
+		 int topMovieSize = 10;
+		 ArrayList<Movie> movies = new ArrayList<Movie>();
+		 ArrayList<Movie> topTenMovies = new ArrayList<Movie>();
+		 for (Movie movie: movieIndex.values()) {
+			 movies.add(movie);
+		 }
+		 
+		 if(movies.size() < 10){
+			 topMovieSize = movies.size();
+		 }
+		 
+		 Collections.sort(movies);
+		 for (int i = (movies.size() -1); i > (movies.size() - topMovieSize); i--){
+			 topTenMovies.add(movies.get(i));
+		 }
+		 
+		 return topTenMovies;
+	 }
+	 
 	 public void rateMovie(String userId, String movieId, String rating){
 		 Optional<User> userCheck = Optional.fromNullable(getUserById(userId));
 		 Optional<Movie> movieCheck = Optional.fromNullable(getMovieById(movieId));
@@ -166,7 +233,7 @@ public class LikeMoviesAPI{
 		    }
 	 }
 	 
-	 public List getUserRatings(String userId){
+	 public List<Rating> getUserRatings(String userId){
 		 
 		 List<Rating> ratings = null;
 		 
@@ -174,7 +241,7 @@ public class LikeMoviesAPI{
 		
 		    if (userCheck.isPresent())
 		    {
-		    	 User user = userIndex.get(userId);
+		    	 User user = userIndex.get(Long.parseLong(userId));
 		    	 ratings = user.getUserRatings();
 		    	 		    	 
 		    }
